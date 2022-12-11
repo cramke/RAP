@@ -2,10 +2,6 @@ use sqlx::postgres::{PgPoolOptions, PgRow, PgPool};
 use sqlx::{FromRow, Row, Postgres, Pool};
 use futures::executor::block_on;
 
-pub fn tester() {
-    println!("Yeat");
-}
-
 pub struct OSMPostgis {
     pool: Pool<Postgres>
 }
@@ -20,10 +16,10 @@ pub async fn make_db_connection() -> OSMPostgis {
 }
 
 pub async fn query(pool: &Pool<Postgres>) -> Vec<PgRow> {
-    let param = "0102000020E61000000300000012A5187B8AFF21408390E2D2E7D548407EC9213DA0FF21401822A7AFE7D54840AB6A381BE1FF2140ADE17DB0E7D54840";
-    let rows = sqlx::query("SELECT * FROM highway_michelstadt WHERE ST_Crosses(highway_michelstadt.geometry, ($1))")
-    .bind(param)
-    .fetch_all(pool).await.unwrap();
+    let param: &str = "0102000020E61000000300000012A5187B8AFF21408390E2D2E7D548407EC9213DA0FF21401822A7AFE7D54840AB6A381BE1FF2140ADE17DB0E7D54840";
+    let rows: Vec<PgRow> = sqlx::query("SELECT * FROM highway_michelstadt WHERE ST_Crosses(highway_michelstadt.geometry, ($1))")
+        .bind(param)
+        .fetch_all(pool).await.unwrap();
     return rows;
 }
 

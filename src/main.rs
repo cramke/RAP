@@ -12,12 +12,11 @@ use db::osm_postgis;
 use db::costs;
 
 fn main() -> Result<(), sqlx::Error> {
-    db::osm_postgis::tester();
     block_on(db::osm_postgis::database());
 
-    let test: HashMap<String, i32> = costs::get_hashmap_costs();
-    let a: &i32 = test.get("path").unwrap();
-    println!("{}", a);
+    let test2: HashMap<String, i32> = costs::read_highway_costs();
+    let b: &i32 = test2.get("track").unwrap();
+    println!("{}", b);
 
     Ok(())
 
