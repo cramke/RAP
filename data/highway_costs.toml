@@ -1,0 +1,13 @@
+primary = 95
+unclassified = 35
+service = 5
+residential = 20
+living_street = 15
+tertiary = 30
+secondary = 60
+track = 5
+footway = 30
+steps = 25
+path = 5
+pedestrian = 35
+primary_link = 80
