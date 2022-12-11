@@ -36,8 +36,8 @@ pub fn process(rows: &Vec<PgRow>) {
 
 pub async fn database() {
 	println!("Run some async function.");
-    let DB = make_db_connection().await;
-    let rows = query(&DB.pool).await;
+    let db = make_db_connection().await;
+    let rows = query(&db.pool).await;
     process(&rows);
 
     println!("\nDone with async");
