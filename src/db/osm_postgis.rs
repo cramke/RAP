@@ -1,4 +1,4 @@
-use sqlx::postgres::{PgPoolOptions, PgRow, PgPool};
+use sqlx::postgres::{PgPoolOptions, PgRow, PgPool, PgArguments};
 use sqlx::{FromRow, Row, Postgres, Pool};
 use futures::executor::block_on;
 
@@ -23,10 +23,17 @@ pub async fn query(pool: &Pool<Postgres>) -> Vec<PgRow> {
     return rows;
 }
 
+pub async fn fetch_intersections_wkt(pool: &Pool<Postgres>, param: &str) -> Vec<PgRow> {
+    let rows: Vec<PgRow> = sqlx::query("SELECT * FROM highway_michelstadt WHERE ST_Crosses(highway_michelstadt.geometry, ST_GeomFromText(($1), 4326))")
+        .bind(param)
+        .fetch_all(pool).await.unwrap();
+    return rows;
+}
+
 pub fn process(rows: &Vec<PgRow>) {
     for row in rows {
         let a = row.get::<String, _>("highway");
-        print!("{}", a);
+        println!("{}", a);
     }
 }
 
@@ -34,6 +41,17 @@ pub async fn database() {
 	println!("Run some async function.");
     let db = make_db_connection().await;
     let rows = query(&db.pool).await;
+    println!("Number of rows: {}", rows.len());
+    process(&rows);
+
+    println!("\nDone with async");
+}
+
+pub async fn database2(param: &str) {
+	println!("Run some async function.");
+    let db = make_db_connection().await;
+    let rows = fetch_intersections_wkt(&db.pool, param).await;
+    println!("Number of rows: {}", rows.len());
     process(&rows);
 
     println!("\nDone with async");
