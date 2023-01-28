@@ -1,6 +1,6 @@
 use std::collections::HashMap;
-use std::fs::{self, File};
-use std::io::{self, prelude::*, BufReader};
+use std::fs::File;
+use std::io::{prelude::*, BufReader};
 
 pub fn read_highway_costs() -> HashMap<String, i32> {
     let mut map: HashMap<String, i32> = HashMap::new();
@@ -11,7 +11,7 @@ pub fn read_highway_costs() -> HashMap<String, i32> {
 
     for line in reader.lines() {
         let text = line.unwrap();
-        let mut a: Vec<&str> = text.split("=").collect();
+        let a: Vec<&str> = text.split("=").collect();
         let key: &str = a.get(0).unwrap().trim();
         let b = a.get(1).unwrap().trim();
         let value: i32 = b.parse().unwrap();
@@ -22,8 +22,13 @@ pub fn read_highway_costs() -> HashMap<String, i32> {
 
 }
 
-pub fn get_hashmap_costs() -> HashMap<String, i32> {
-    let mut map: HashMap<String, i32> = HashMap::new();
-    map.insert("path".to_string(), 5);
-    return map;
+pub fn get_cost_from_types(intersections: Vec<String>) -> i32 {
+    let test2: HashMap<String, i32> = read_highway_costs();
+    let mut cost_cumulative = 0;
+    for intersection in intersections {
+        let cost = test2.get(&intersection).unwrap();
+        cost_cumulative = cost_cumulative + cost;
+    }
+    println!("Cumulative cost of line crossings: {}", cost_cumulative);
+    return cost_cumulative;
 }
