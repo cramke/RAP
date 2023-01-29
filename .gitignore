@@ -1,4 +1,6 @@
 /target
 Cargo.lock
-/data/*.sql
-/data/*qmd
+/data/*
+*png
+*gv
+*pyc

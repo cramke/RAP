@@ -5,7 +5,7 @@ use db::osm_optimizer;
 use prm::optimizer::{Optimizer};
 use prm::node::Node2D;
 use prm::boundaries::Boundaries;
-use prm::problem::ProblemDefinition;
+use prm::problem::{ProblemDefinition, Parameter};
 
 fn is_collision(_node: &Node2D) -> bool {
     // TODO: no collision checking as of now
@@ -21,7 +21,8 @@ fn run_example() {
     let goal: Node2D = Node2D { x: 9.07f64, y: 49.71f64, idx: 0 };
     let bounds: Boundaries = Boundaries::new(8.925f64, 9.08f64, 49.66f64, 49.72f64);
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
-    let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer);
+    let params: Parameter = Parameter::new(48usize);
+    let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer, params);
     
     println!("#### PRM ####");
     let start = Instant::now();
@@ -29,11 +30,10 @@ fn run_example() {
     let duration = start.elapsed();
     println!("Time elapsed in expensive_function() is: {:?}", duration);
 
-    let path: &str = "solution_graph.dot";
+    let path: &str = "data/graph.dot";
     pdef.print_statistics(path);    
-    let path: &str = "solution_path.txt";
+    let path: &str = "data/solution_path.txt";
     pdef.write_solution_path(path);
-
 }
 
 fn main() {
