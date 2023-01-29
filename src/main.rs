@@ -21,15 +21,21 @@ fn run_example() {
     let goal: Node2D = Node2D { x: 9.07f64, y: 49.71f64, idx: 0 };
     let bounds: Boundaries = Boundaries::new(8.925f64, 9.08f64, 49.66f64, 49.72f64);
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
-    let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer);                                       
+    let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer);
+    
+    println!("#### PRM ####");
+    let start = Instant::now();
     pdef.solve();
-    pdef.print_statistics();
+    let duration = start.elapsed();
+    println!("Time elapsed in expensive_function() is: {:?}", duration);
+
+    let path: &str = "solution_graph.dot";
+    pdef.print_statistics(path);    
+    let path: &str = "solution_path.txt";
+    pdef.write_solution_path(path);
+
 }
 
 fn main() {
-    println!("#### PRM ####");
-    let start = Instant::now();
     run_example();
-    let duration = start.elapsed();
-    println!("Time elapsed in expensive_function() is: {:?}", duration);
 }
