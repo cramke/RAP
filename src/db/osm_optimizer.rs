@@ -44,7 +44,6 @@ impl Optimizer for OSMPostgisOptimizer {
     fn get_edge_weight(&self, begin: &Node2D, end: &Node2D) -> f64 {
         let intersections: Vec<String> = block_on(self.fetch_intersecting_highways(&begin.get_line_wkt(&end)));
         let cost = costs::get_cost_from_types(intersections);
-        println!("Used the wanted function");
         return cost as f64;
     }
 }

@@ -29,6 +29,5 @@ pub fn get_cost_from_types(intersections: Vec<String>) -> i32 {
         let cost = test2.get(&intersection).unwrap();
         cost_cumulative = cost_cumulative + cost;
     }
-    println!("Cumulative cost of line crossings: {}", cost_cumulative);
     return cost_cumulative;
 }
