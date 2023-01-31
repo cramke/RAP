@@ -2,10 +2,10 @@ use std::time::Instant;
 
 mod db;
 use db::osm_optimizer;
-use prm::optimizer::{Optimizer};
-use prm::node::Node2D;
-use prm::boundaries::Boundaries;
-use prm::problem::{ProblemDefinition, Parameter};
+use mopla::optimizer::{Optimizer};
+use mopla::node::Node2D;
+use mopla::boundaries::Boundaries;
+use mopla::problem::{ProblemDefinition, Parameter};
 
 fn is_collision(_node: &Node2D) -> bool {
     // TODO: no collision checking as of now
@@ -21,10 +21,10 @@ fn run_example() {
     let goal: Node2D = Node2D { x: 9.07f64, y: 49.71f64, idx: 0 };
     let bounds: Boundaries = Boundaries::new(8.925f64, 9.08f64, 49.665f64, 49.72f64);
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
-    let params: Parameter = Parameter::new(498usize);
+    let params: Parameter = Parameter::new(998usize);
     let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer, params);
     
-    println!("#### PRM ####");
+    println!("#### mopla ####");
     let start = Instant::now();
     pdef.solve();
     let duration = start.elapsed();

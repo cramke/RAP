@@ -10,4 +10,4 @@ edition = "2021"
 sqlx = { version = "0.6.2", features = [ "runtime-async-std-native-tls", "postgres", "json" ] }
 futures = "0.3"
 geo-types = "0.7.8"
-prm = { git = "file:/home/samtal/prm", rev="4c9924e"}
+mopla = { git = "file:/home/samtal/mopla", rev="0496226"}

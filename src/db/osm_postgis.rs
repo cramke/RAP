@@ -7,7 +7,7 @@ pub async fn fetch_intersections_wkt(pool: &Pool<Postgres>, param: &str) -> Vec<
         .fetch_all(pool).await.unwrap();
     return rows;
 }
-
+    
 pub fn process(rows: &Vec<PgRow>) -> Vec<String> {
     const INDEX: &str = "highway";
     let mut highways: Vec<String> = Vec::new();
