@@ -9,13 +9,22 @@ def read_graph_dot():
 
     points_wkt = []
     for line in lines:
-        if line.find("POINT(") == -1:
+        if line.find("Point") == -1:
             continue
         else:
-            start = line.find("POINT(")
-            end = line.find(")", start+1)
-            point = loads(line[start:end+1])
+            start = line.find("{")
+            end = line.find("}", start+1)
+            wkt_stlye = "POINT(" + line[start+5:end].replace(", y: ", " ") + ")"
+            point = loads(wkt_stlye)
             points_wkt.append(point)
+
+    geom = []
+    for i,p in enumerate(points_wkt):
+        try: 
+            geom.append(LineString([p,points_wkt[i+1]]))
+        except IndexError:
+            pass
+    points_wkt = points_wkt + geom
 
     ids = [0] * len(points_wkt)
     highway = ["None"] * len(points_wkt)
@@ -25,22 +34,23 @@ def read_graph_dot():
         "geometry": points_wkt,
     }
 
+
     graph = geopandas.GeoDataFrame(data, crs="EPSG:4326")
-    graph.head()
     return graph
 
 def read_solution_path_txt():
     with open('../data/solution_path.txt', 'r') as file:
-        lines = file.read().split(",")
+        lines = file.read().split("Point")
 
     points_wkt = []
     for line in lines:
-        if line.find("POINT(") == -1:
+        if line.find("{") == -1:
             continue
         else:
-            start = line.find("POINT(")
-            end = line.find(")", start+1)
-            point = loads(line[start:end+1])
+            start = line.find("{")
+            end = line.find("}", start+1)
+            wkt_stlye = "POINT(" + line[start+5:end].replace(", y: ", " ") + ")"
+            point = loads(wkt_stlye)
             points_wkt.append(point)
 
     geom = []

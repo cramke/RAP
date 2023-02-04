@@ -2,10 +2,12 @@ use std::time::Instant;
 
 mod db;
 use db::osm_optimizer;
-use mopla::optimizer::{Optimizer};
-use mopla::node::Node2D;
-use mopla::boundaries::Boundaries;
-use mopla::problem::{ProblemDefinition, Parameter};
+use geo::Point;
+use mpf::collision_checker::{CollisionChecker, NaiveCollisionChecker};
+use mpf::optimizer::{Optimizer};
+use mpf::node::Node2D;
+use mpf::boundaries::Boundaries;
+use mpf::problem::{ProblemDefinition, Parameter};
 
 fn is_collision(_node: &Node2D) -> bool {
     // TODO: no collision checking as of now
@@ -16,15 +18,33 @@ fn is_edge_in_collision() -> bool {
     return false;
 }
 
-fn run_example() {
-    let start: Node2D = Node2D { x: 8.926f64, y: 49.67f64, idx: 0 };
-    let goal: Node2D = Node2D { x: 9.07f64, y: 49.71f64, idx: 0 };
-    let bounds: Boundaries = Boundaries::new(8.925f64, 9.08f64, 49.665f64, 49.72f64);
+struct GeoCollsionChecker{}
+
+impl CollisionChecker for GeoCollsionChecker {
+
+    fn init(&self) -> bool {
+        return true;
+    }
+
+    fn is_edge_colliding(&self, node: &geo::Point, end: &geo::Point) -> bool {
+        return true;
+    }
+
+    fn is_node_colliding(&self, node: &geo::Point) -> bool {
+        return true;
+    }
+}
+
+fn run_example_postgis() {
+    let start: Point = Point::new(8.936f64, 49.67f64);
+    let goal: Point = Point::new(9.07f64, 49.71f64);
+    let bounds: Boundaries = Boundaries::new(8.935f64, 9.08f64, 49.665f64, 49.72f64);
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
-    let params: Parameter = Parameter::new(998usize);
-    let mut pdef= ProblemDefinition::new( start, goal, bounds, is_collision, is_edge_in_collision, optimizer, params);
+    let params: Parameter = Parameter::new(100usize);
+    let collision_checker: Box<dyn CollisionChecker> = NaiveCollisionChecker::new();
+    let mut pdef= ProblemDefinition::new( start, goal, bounds, optimizer, params, collision_checker);
     
-    println!("#### mopla ####");
+    println!("#### mpf ####");
     let start = Instant::now();
     pdef.solve();
     let duration = start.elapsed();
@@ -36,6 +56,10 @@ fn run_example() {
     pdef.write_solution_path(path);
 }
 
+fn run_example_geo() {
+
+}
+
 fn main() {
-    run_example();
+    run_example_postgis();
 }

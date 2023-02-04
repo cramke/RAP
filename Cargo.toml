@@ -10,4 +10,6 @@ edition = "2021"
 sqlx = { version = "0.6.2", features = [ "runtime-async-std-native-tls", "postgres", "json" ] }
 futures = "0.3"
 geo-types = "0.7.8"
-mopla = { git = "file:/home/samtal/mopla", rev="0496226"}
+mpf = { git = "file:/home/samtal/mpf", branch = "main" } 
+geo = "0.23.1"
+wkt = "0.10.3"
