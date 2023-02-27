@@ -1,6 +1,6 @@
 
 use futures::future::join_all;
-use mpf::optimizer::{Optimizer};
+use mpl::optimizer::{Optimizer};
 use geo::{Point, Line, LineString};
 use wkt::ToWkt;
 
@@ -21,7 +21,7 @@ impl OSMPostgisOptimizer {
     }
     
     pub async fn make_db_connection() -> Pool<Postgres> {
-        const MAX_CONNECTIONS: u32 = 20;
+        const MAX_CONNECTIONS: u32 = 5;
         const URL: &str = "postgresql://postgres:password@localhost:5432/osm";
         let db: Pool<Postgres> = PgPoolOptions::new()
             .max_connections(MAX_CONNECTIONS)

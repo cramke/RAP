@@ -7,6 +7,13 @@ pub async fn fetch_intersections_wkt(pool: &Pool<Postgres>, param: &str) -> Vec<
         .fetch_all(pool).await.unwrap();
     return rows;
 }
+
+pub async fn fetch_contains_wkt(pool: &Pool<Postgres>, param: &str) -> Vec<PgRow> {
+    let rows: Vec<PgRow> = sqlx::query("SELECT * FROM obstruction_michelstadt WHERE ST_Contains(highway_michelstadt.geometry, ST_GeomFromText(($1), 4326))")
+        .bind(param)
+        .fetch_all(pool).await.unwrap();
+    return rows;
+}
     
 pub fn process(rows: &Vec<PgRow>) -> Vec<String> {
     const INDEX: &str = "highway";
