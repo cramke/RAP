@@ -2,8 +2,10 @@ use mpl::collision_checker::{CollisionChecker};
 use wkt::ToWkt;
 use crate::db::{osm_postgis};
 use futures::executor::block_on;
-use sqlx::postgres::PgPoolOptions;
+use sqlx::postgres::{PgPoolOptions, PgRow};
 use sqlx::{Postgres, Pool};
+use geo_types::{Point, LineString};
+
 
 pub struct GeoCollsionChecker{
     pool: Pool<Postgres>,
@@ -26,9 +28,8 @@ impl GeoCollsionChecker {
         return db;
     }
 
-    pub async fn fetch_is_contain(&self, param: &str) -> Vec<String> {
-        let rows = osm_postgis::fetch_contains_wkt(&self.pool, param).await;
-        return osm_postgis::process(&rows);
+    pub async fn fetch_is_contain(&self, param: &str) -> Vec<PgRow> {
+        osm_postgis::fetch_contains_wkt(&self.pool, param).await
     }
 }
 
@@ -38,8 +39,10 @@ impl CollisionChecker for GeoCollsionChecker {
         return true;
     }
 
-    fn is_edge_colliding(&self, node: &geo::Point, end: &geo::Point) -> bool {
-        return false;
+    fn is_edge_colliding(&self, start: &Point, end: &Point) -> bool {
+        let line = LineString::from(vec![*start, *end]);
+        let collisions = block_on(self.fetch_is_contain(&line.wkt_string()));
+        collisions.len() > 0 
     }
 
     fn is_node_colliding(&self, node: &geo::Point) -> bool {
