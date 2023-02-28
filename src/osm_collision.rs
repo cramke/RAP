@@ -1,4 +1,5 @@
 use mpl::collision_checker::{CollisionChecker};
+use wkt::ToWkt;
 use crate::db::{osm_postgis, costs};
 use futures::executor::block_on;
 use sqlx::postgres::PgPoolOptions;
@@ -38,11 +39,11 @@ impl CollisionChecker for GeoCollsionChecker {
     }
 
     fn is_edge_colliding(&self, node: &geo::Point, end: &geo::Point) -> bool {
-        return true;
+        return false;
     }
 
     fn is_node_colliding(&self, node: &geo::Point) -> bool {
-        // block_on(self.fetch_is_contain(&node.wkt_string()));
-        return false;
+        let collisions = block_on(self.fetch_is_contain(&node.wkt_string()));
+        collisions.len() > 0 
     }
 }

@@ -5,7 +5,7 @@ use std::io::{prelude::*, BufReader};
 pub fn read_highway_costs() -> HashMap<String, i32> {
     let mut map: HashMap<String, i32> = HashMap::new();
 
-    let file_path: &str = "/home/samtal/rrisk/data/highway_costs.toml";
+    let file_path: &str = "/home/samtal/rap/data/highway_costs.toml";
     let a = File::open(file_path);
     let reader = BufReader::new(a.unwrap());
 

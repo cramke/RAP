@@ -23,6 +23,11 @@ Use ./Tools/geojson.ipynb to upload geojson to postgis.
 docker container exec -it osm_postgis bash
 docker container exec -it osm_postgis psql -U postgres -d osm
 
+### Commands
+\l - Show Databases
+\dt - Show tables
+\c xxx - connect to xxx
+
 ## Problem solving
 if port already bind and docker run fails: 
     sudo lsof -i :5432

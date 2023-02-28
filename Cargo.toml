@@ -1,5 +1,5 @@
 [package]
-name = "rrisk"
+name = "rap"
 version = "0.1.0"
 authors = ["Carsten Ramke <carsten.ramke@gmail.com>"]
 edition = "2021"
