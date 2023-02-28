@@ -1,7 +1,7 @@
 use std::time::Instant;
 mod db;
 use geo::Point;
-use mpl::collision_checker::{CollisionChecker, NaiveCollisionChecker};
+use mpl::collision_checker::{CollisionChecker};
 use mpl::optimizer::{Optimizer};
 use mpl::boundaries::Boundaries;
 use mpl::problem::{ProblemDefinition, Parameter};
@@ -13,7 +13,6 @@ fn run_example_postgis() {
     let bounds: Boundaries = Boundaries::new(8.935f64, 9.08f64, 49.665f64, 49.72f64);
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
     let params: Parameter = Parameter{max_size:15, k_nearest_neighbors:5};
-    // let collision_checker: Box<dyn CollisionChecker> = NaiveCollisionChecker::new_box();
     let collision_checker: Box<dyn CollisionChecker> = GeoCollsionChecker::new();
     let mut pdef= ProblemDefinition::new( start, goal, bounds, optimizer, params, collision_checker);
     
@@ -27,10 +26,6 @@ fn run_example_postgis() {
     pdef.print_statistics(path);    
     let path: &str = "data/solution_path.txt";
     pdef.write_solution_path(path);
-}
-
-fn run_example_geo() {
-
 }
 
 fn main() {

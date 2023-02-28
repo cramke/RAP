@@ -1,6 +1,6 @@
 use mpl::collision_checker::{CollisionChecker};
 use wkt::ToWkt;
-use crate::db::{osm_postgis, costs};
+use crate::db::{osm_postgis};
 use futures::executor::block_on;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Postgres, Pool};
