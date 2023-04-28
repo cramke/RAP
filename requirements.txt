@@ -1,3 +1,6 @@
 geopandas
 sqlalchemy
 psycopg2
+google-cloud
+google-cloud-storage
+google-api-python-client
