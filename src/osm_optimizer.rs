@@ -32,7 +32,7 @@ impl OSMPostgisOptimizer {
     }
 
     pub async fn fetch_intersecting_highways(&self, param: &str) -> Vec<String> {
-        let rows = osm_postgis::fetch_intersections_wkt(&self.pool, param).await;
+        let rows = osm_postgis::fetch_intersects_wkt(&self.pool, param).await;
         return osm_postgis::process(&rows);
     }
 
