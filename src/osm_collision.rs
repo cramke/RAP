@@ -4,7 +4,7 @@ use crate::db::{osm_postgis};
 use futures::executor::block_on;
 use sqlx::postgres::{PgPoolOptions, PgRow};
 use sqlx::{Postgres, Pool};
-use geo_types::{Point, LineString};
+use geo::{Point, LineString};
 
 
 pub struct GeoCollsionChecker{
