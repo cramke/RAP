@@ -1,5 +1,4 @@
 use std::time::Instant;
-mod db;
 use geo::Point;
 use mpl::collision_checker::{CollisionChecker};
 use mpl::optimizer::{Optimizer};

@@ -1,11 +1,9 @@
 use mpl::collision_checker::{CollisionChecker};
 use wkt::ToWkt;
-use crate::db::{osm_postgis};
 use futures::executor::block_on;
 use sqlx::postgres::{PgPoolOptions, PgRow};
 use sqlx::{Postgres, Pool};
 use geo::{Point, LineString};
-
 
 pub struct GeoCollsionChecker{
     pool: Pool<Postgres>,

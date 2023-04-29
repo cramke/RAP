@@ -1,7 +1,8 @@
 
-use futures::future::join_all;
+use std::collections::HashMap;
+
 use mpl::optimizer::{Optimizer};
-use geo::{Point, Line, LineString};
+use geo::{Point, LineString};
 use wkt::ToWkt;
 
 use sqlx::postgres::{PgPoolOptions};
@@ -12,12 +13,14 @@ use crate::db::{osm_postgis, costs};
 
 #[derive(Debug, Clone)]
 pub struct OSMPostgisOptimizer {
-    pool: Pool<Postgres>
+    pool: Pool<Postgres>,
+    cost_map: HashMap<String, i32>
 }
 impl OSMPostgisOptimizer {
     pub fn new() -> Box<dyn Optimizer> {
         let pool: Pool<Postgres> = block_on(OSMPostgisOptimizer::make_db_connection());
-        return Box::new(OSMPostgisOptimizer{pool});
+        let cost_map: HashMap<String, i32> = costs::read_highway_costs();
+        return Box::new(OSMPostgisOptimizer{pool, cost_map});
     }
     
     pub async fn make_db_connection() -> Pool<Postgres> {
@@ -39,14 +42,8 @@ impl OSMPostgisOptimizer {
     async fn async_query(&self, begin: Point, end: Point) -> (Point, Point, f64) {
         let line: LineString = geo::LineString::from(vec![begin, end]);
         let intersections: Vec<String> = self.fetch_intersecting_highways(&line.wkt_string()).await;
-        let cost = costs::get_cost_from_types(intersections);
+        let cost = costs::get_cost_from_types(intersections, &self.cost_map);
         return (begin, end, cost as f64);
-    }
-
-    async fn collect_async_queries(&self, edges: Vec<(Point, Point)>) -> Vec<(Point, Point, f64)> {
-            let futures = edges.iter().map(|x| self.async_query(x.0, x.1));
-            let result = join_all(futures).await;
-        return result;
     }
 }
 
