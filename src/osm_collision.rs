@@ -1,6 +1,7 @@
 use mpl::collision_checker::{CollisionChecker};
 use wkt::ToWkt;
 use futures::executor::block_on;
+use futures::join;
 use sqlx::postgres::{PgPoolOptions, PgRow};
 use sqlx::{Postgres, Pool};
 use geo::{Point, LineString};
@@ -25,8 +26,19 @@ impl GeoCollsionChecker {
             .unwrap();
     }
 
-    pub async fn fetch_is_intersecting(&self, param: &str) -> Vec<PgRow> {
+    pub async fn async_is_colliding(&self, param: &str) -> (Vec<PgRow>, Vec<PgRow>) {
+        let ground_collisions = self.fetch_ground_collision(&param);
+        let air_collisions = self.fetch_airspace_collision(&param);
+        return join!(ground_collisions, air_collisions);
+    }
+
+    pub async fn fetch_ground_collision(&self, param: &str) -> Vec<PgRow> {
         let sql: &str = "SELECT name FROM obstruction_michelstadt WHERE ST_Intersects(obstruction_michelstadt.geometry, ST_GeomFromText(($1), 4326))";
+        return sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap();
+    }
+
+    pub async fn fetch_airspace_collision(&self, param: &str) -> Vec<PgRow> {
+        let sql: &str = "SELECT name FROM obstruction_airspace_de WHERE ST_Intersects(obstruction_airspace_de.geometry, ST_GeomFromText(($1), 4326))";
         return sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap();
     }
 }
@@ -39,12 +51,12 @@ impl CollisionChecker for GeoCollsionChecker {
 
     fn is_edge_colliding(&self, start: &Point, end: &Point) -> bool {
         let line: LineString = LineString::from(vec![*start, *end]);
-        let collisions: Vec<PgRow> = block_on(self.fetch_is_intersecting(&line.wkt_string()));
-        return collisions.len() > 0;
+        let (ground_collisions, air_collisions) = block_on(self.async_is_colliding(&line.wkt_string()));
+        return ground_collisions.len() > 0 || air_collisions.len() > 0;
     }
 
     fn is_node_colliding(&self, node: &geo::Point) -> bool {
-        let collisions: Vec<PgRow> = block_on(self.fetch_is_intersecting(&node.wkt_string()));
-        return collisions.len() > 0;
+        let (ground_collisions, air_collisions) = block_on(self.async_is_colliding(&node.wkt_string()));
+        return ground_collisions.len() > 0 || air_collisions.len() > 0;
     }
 }
