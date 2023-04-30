@@ -26,3 +26,48 @@ pub fn get_cost_from_types(intersections: Vec<String>, cost_map: &HashMap<String
                                     .sum();
     return costs;
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+    use super::*;
+
+    #[test]
+    fn test_get_cost_empty() {
+        assert!(true); 
+        let intersections: Vec<String> = Vec::new();
+        let cost_map: HashMap<String, i32> = HashMap::new();
+        
+        let result = get_cost_from_types(intersections, &cost_map);
+        assert_eq!(result, 0);
+    }
+
+    #[test]
+    fn test_get_cost_positive_number() {
+        assert!(true); 
+        let road: String = "road".to_string();
+        let intersections: Vec<String> = vec![road.clone()];
+        let cost: i32 = 25;
+
+        let mut cost_map: HashMap<String, i32> = HashMap::new();
+        cost_map.insert(road, cost);
+        
+        let result = get_cost_from_types(intersections, &cost_map);
+        assert_eq!(result, cost);
+    }
+
+    #[test]
+    fn test_get_cost_negative_number() {
+        assert!(true); 
+        let road: String = "road".to_string();
+        let intersections: Vec<String> = vec![road.clone()];
+        let cost: i32 = -3;
+
+        let mut cost_map: HashMap<String, i32> = HashMap::new();
+        cost_map.insert(road, cost);
+        
+        let result = get_cost_from_types(intersections, &cost_map);
+        assert_eq!(result, cost);
+    }
+}
+
