@@ -12,3 +12,7 @@ futures = "0.3"
 mpl = { git = "https://github.com/cramke/motion_planning.git", ref="v0.0.2"} 
 geo = "0.23.1"
 wkt = "0.10.3"
+actix-web = "4"
+actix-cors = "0.6.4"
+serde = { version = "1.0.160", features = ["derive"] }
+serde_json = "1.0.96"
