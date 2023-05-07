@@ -29,7 +29,9 @@ fn run_example_postgis() {
 }
 
 #[actix_web::main]
+#[allow(unused_must_use)]
 async fn main() {
     run_example_postgis();
-    server::launch();
+    server::launch(); // needs to be await'ed to execute. But not on commits because server would never stop.
+    // let res = server::launch().await;
 }

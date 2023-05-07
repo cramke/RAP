@@ -11,12 +11,12 @@ pub fn read_highway_costs() -> HashMap<String, i32> {
 
     for line in reader.lines() {
         let text = line.unwrap();
-        let parsed_line: Vec<&str> = text.split("=").collect();
+        let parsed_line: Vec<&str> = text.split('=').collect();
         let key: &str = parsed_line.first().unwrap().trim();
         let value: i32 = parsed_line.get(1).unwrap().trim().parse().unwrap();
         map.insert(key.to_string(), value);
     }
-    return map;
+    map
 }
 
 pub fn get_cost_from_types(intersections: Vec<String>, cost_map: &HashMap<String, i32>) -> i32 {
@@ -24,7 +24,7 @@ pub fn get_cost_from_types(intersections: Vec<String>, cost_map: &HashMap<String
                                     .map( |single_intersect| cost_map.get(single_intersect)
                                     .unwrap())
                                     .sum();
-    return costs;
+    costs
 }
 
 #[cfg(test)]

@@ -22,44 +22,44 @@ impl GeoCollsionChecker {
         
     pub async fn make_db_connection(db_config: DBConfig) -> Pool<Postgres> {
         const MAX_CONNECTIONS: u32 = 5;
-        return PgPoolOptions::new()
+        PgPoolOptions::new()
             .max_connections(MAX_CONNECTIONS)
             .connect(&db_config.generate_url())
             .await
-            .unwrap();
+            .unwrap()
     }
 
     pub async fn async_is_colliding(&self, param: &str) -> (Vec<PgRow>, Vec<PgRow>) {
-        let ground_collisions = self.fetch_ground_collision(&param);
-        let air_collisions = self.fetch_airspace_collision(&param);
-        return join!(ground_collisions, air_collisions);
+        let ground_collisions = self.fetch_ground_collision(param);
+        let air_collisions = self.fetch_airspace_collision(param);
+        join!(ground_collisions, air_collisions)
     }
 
     pub async fn fetch_ground_collision(&self, param: &str) -> Vec<PgRow> {
         let sql: &str = "SELECT name FROM obstruction_michelstadt WHERE ST_Intersects(obstruction_michelstadt.geometry, ST_GeomFromText(($1), 4326))";
-        return sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap();
+        sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap()
     }
 
     pub async fn fetch_airspace_collision(&self, param: &str) -> Vec<PgRow> {
         let sql: &str = "SELECT name FROM obstruction_airspace_de WHERE ST_Intersects(obstruction_airspace_de.geometry, ST_GeomFromText(($1), 4326))";
-        return sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap();
+        sqlx::query(sql).bind(param).fetch_all(&self.pool).await.unwrap()
     }
 }
 
 impl CollisionChecker for GeoCollsionChecker {
 
     fn init(&self) -> bool {
-        return true;
+        true
     }
 
     fn is_edge_colliding(&self, start: &Point, end: &Point) -> bool {
         let line: LineString = LineString::from(vec![*start, *end]);
         let (ground_collisions, air_collisions) = block_on(self.async_is_colliding(&line.wkt_string()));
-        return ground_collisions.len() > 0 || air_collisions.len() > 0;
+        !ground_collisions.is_empty() || !air_collisions.is_empty()
     }
 
     fn is_node_colliding(&self, node: &geo::Point) -> bool {
         let (ground_collisions, air_collisions) = block_on(self.async_is_colliding(&node.wkt_string()));
-        return ground_collisions.len() > 0 || air_collisions.len() > 0;
+        !ground_collisions.is_empty() ||!air_collisions.is_empty()
     }
 }

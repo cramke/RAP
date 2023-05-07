@@ -21,5 +21,5 @@ pub fn process(rows: &Vec<PgRow>) -> Vec<String> {
         let highway: String = row.get::<String, _>(INDEX);
         highways.push(highway);
     }
-    return highways;
+    highways
 }

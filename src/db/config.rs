@@ -8,15 +8,17 @@ pub struct DBConfig {
     password: String,
 }
 
-impl DBConfig {
-    pub fn default() -> DBConfig {
+impl std::default::Default for DBConfig {
+    fn default() -> DBConfig {
         DBConfig{
             db: "osm".to_string(),
             username: "postgres".to_string(),
             password: "password".to_string(),
         }
     }
+}
 
+impl DBConfig {
     pub fn from_file(path: &str) -> DBConfig {
         let config_raw = fs::read_to_string(path).unwrap();
         let settings: DBConfig = serde_json::from_str(&config_raw).expect("JSON did not work");
@@ -24,8 +26,7 @@ impl DBConfig {
     }
 
     pub fn generate_url(&self) -> String {
-        let gen = format!("postgresql://{}:{}@localhost:5432/{}", self.username, &self.password, self.db);
-        gen.to_string()
+        format!("postgresql://{}:{}@localhost:5432/{}", self.username, &self.password, self.db)
     }
 }
 
