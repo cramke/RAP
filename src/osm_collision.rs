@@ -6,22 +6,25 @@ use sqlx::postgres::{PgPoolOptions, PgRow};
 use sqlx::{Postgres, Pool};
 use geo::{Point, LineString};
 
+use crate::db::config::DBConfig;
+
 pub struct GeoCollsionChecker{
     pool: Pool<Postgres>,
 }
 
 impl GeoCollsionChecker {
     pub fn new() -> Box<dyn CollisionChecker> {
-        let pool: Pool<Postgres> = block_on(GeoCollsionChecker::make_db_connection());
-        return Box::new(GeoCollsionChecker{pool});
+        let pool: Pool<Postgres> = block_on(GeoCollsionChecker::make_db_connection(DBConfig::default()));
+        Box::new(
+            GeoCollsionChecker{pool}, 
+        )
     }
         
-    pub async fn make_db_connection() -> Pool<Postgres> {
+    pub async fn make_db_connection(db_config: DBConfig) -> Pool<Postgres> {
         const MAX_CONNECTIONS: u32 = 5;
-        const URL: &str = "postgresql://postgres:password@localhost:5432/osm";
         return PgPoolOptions::new()
             .max_connections(MAX_CONNECTIONS)
-            .connect(URL)
+            .connect(&db_config.generate_url())
             .await
             .unwrap();
     }

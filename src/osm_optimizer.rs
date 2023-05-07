@@ -9,6 +9,7 @@ use sqlx::postgres::{PgPoolOptions};
 use sqlx::{Pool, Postgres};
 use futures::executor::block_on;
 
+use crate::db::config::DBConfig;
 use crate::db::{osm_postgis, costs};
 
 #[derive(Debug, Clone)]
@@ -18,17 +19,16 @@ pub struct OSMPostgisOptimizer {
 }
 impl OSMPostgisOptimizer {
     pub fn new() -> Box<dyn Optimizer> {
-        let pool: Pool<Postgres> = block_on(OSMPostgisOptimizer::make_db_connection());
+        let pool: Pool<Postgres> = block_on(OSMPostgisOptimizer::make_db_connection(DBConfig::default()));
         let cost_map: HashMap<String, i32> = costs::read_highway_costs();
         return Box::new(OSMPostgisOptimizer{pool, cost_map});
     }
     
-    pub async fn make_db_connection() -> Pool<Postgres> {
+    pub async fn make_db_connection(db_config: DBConfig) -> Pool<Postgres> {
         const MAX_CONNECTIONS: u32 = 5;
-        const URL: &str = "postgresql://postgres:password@localhost:5432/osm";
         let db: Pool<Postgres> = PgPoolOptions::new()
             .max_connections(MAX_CONNECTIONS)
-            .connect(URL)
+            .connect(&db_config.generate_url())
             .await
             .unwrap();
         return db;
@@ -49,7 +49,7 @@ impl OSMPostgisOptimizer {
 
 impl Optimizer for OSMPostgisOptimizer {
     fn init(&mut self) -> bool {
-        self.pool = block_on(OSMPostgisOptimizer::make_db_connection());
+        self.pool = block_on(OSMPostgisOptimizer::make_db_connection(DBConfig::default()));
         return true;
     }
 

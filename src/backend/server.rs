@@ -53,8 +53,7 @@ async fn hello() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
-#[actix_web::main]
-pub async fn launch_server() -> std::io::Result<()> {
+pub async fn launch() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(hello)

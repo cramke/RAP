@@ -4,7 +4,7 @@ use mpl::collision_checker::{CollisionChecker};
 use mpl::optimizer::{Optimizer};
 use mpl::boundaries::Boundaries;
 use mpl::problem::{ProblemDefinition, Parameter};
-use rap::server::server::launch_server;
+use rap::backend::server;
 use rap::{osm_optimizer, osm_collision::GeoCollsionChecker};
 
 fn run_example_postgis() {
@@ -28,7 +28,8 @@ fn run_example_postgis() {
     pdef.write_solution_path(path);
 }
 
-fn main() {
-    launch_server();
-    // run_example_postgis();
+#[actix_web::main]
+async fn main() {
+    run_example_postgis();
+    server::launch();
 }
