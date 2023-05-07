@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_config_from_file() {
-        let path = "data/configs/dbconfig.json";
+        let path = "tests/data/dbconfig.json";
         let settings = DBConfig::from_file(path);
         assert_eq!(settings.db, "osm");
         assert_eq!(settings.username, "postgres");
