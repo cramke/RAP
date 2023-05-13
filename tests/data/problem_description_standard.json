@@ -1,0 +1,14 @@
+{
+    "start_lon": 8.936,
+    "start_lat": 49.67,
+    "goal_lon": 9.07,
+    "goal_lat": 49.71,
+    "nodes_max": 25,
+    "k_nearest_neighbors": 5,
+    "boundaries": {
+        "x_lower": 8.935,
+        "x_upper": 9.08,
+        "y_lower": 49.665,
+        "y_upper": 49.72
+    }
+}

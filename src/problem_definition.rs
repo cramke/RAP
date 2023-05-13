@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn test_config_from_file() {
-        let path = "data/configs/problem_description_standard.json";
+        let path = "tests/data/problem_description_standard.json";
         let settings = ProblemConfig::from_file(path);
         assert_eq!(settings.k_nearest_neighbors, 5);
         assert_eq!(settings.nodes_max, 25);
