@@ -5,18 +5,26 @@ use mpl::optimizer::{Optimizer};
 use mpl::boundaries::Boundaries;
 use mpl::problem::{ProblemDefinition, Parameter};
 use rap::backend::server;
-use rap::{osm_optimizer, osm_collision::GeoCollsionChecker};
+use rap::{osm_optimizer, osm_collision, problem_definition};
 
 fn run_example_postgis() {
-    let start: Point = Point::new(8.936f64, 49.67f64);
-    let goal: Point = Point::new(9.07f64, 49.71f64);
-    let bounds: Boundaries = Boundaries::new(8.935f64, 9.08f64, 49.665f64, 49.72f64);
+    let path = "data/configs/problem_description_standard.json";
+    let p_config = problem_definition::ProblemConfig::from_file(path);
+
+    let start: Point = Point::new(p_config.start_lon, p_config.start_lat);
+    let goal: Point = Point::new(p_config.goal_lon, p_config.goal_lat);
+    let bounds: Boundaries = Boundaries::new(
+        p_config.boundaries.x_lower,
+        p_config.boundaries.x_upper,
+        p_config.boundaries.y_lower,
+        p_config.boundaries.y_upper,
+    );
     let optimizer: Box<dyn Optimizer> = osm_optimizer::OSMPostgisOptimizer::new();
-    let params: Parameter = Parameter{max_size:15, k_nearest_neighbors:5};
-    let collision_checker: Box<dyn CollisionChecker> = GeoCollsionChecker::new();
+    let params: Parameter = Parameter{max_size:p_config.nodes_max, k_nearest_neighbors:p_config.k_nearest_neighbors};
+    let collision_checker: Box<dyn CollisionChecker> = osm_collision::GeoCollisionChecker::new();
     let mut pdef= ProblemDefinition::new( start, goal, bounds, optimizer, params, collision_checker);
     
-    println!("#### mpl ####");
+    println!("#### Planning ####");
     let start = Instant::now();
     pdef.solve();
     let duration = start.elapsed();

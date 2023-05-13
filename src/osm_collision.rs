@@ -8,15 +8,15 @@ use geo::{Point, LineString};
 
 use crate::db::config::DBConfig;
 
-pub struct GeoCollsionChecker{
+pub struct GeoCollisionChecker{
     pool: Pool<Postgres>,
 }
 
-impl GeoCollsionChecker {
+impl GeoCollisionChecker {
     pub fn new() -> Box<dyn CollisionChecker> {
-        let pool: Pool<Postgres> = block_on(GeoCollsionChecker::make_db_connection(DBConfig::default()));
+        let pool: Pool<Postgres> = block_on(GeoCollisionChecker::make_db_connection(DBConfig::default()));
         Box::new(
-            GeoCollsionChecker{pool}, 
+            GeoCollisionChecker{pool}, 
         )
     }
         
@@ -46,7 +46,7 @@ impl GeoCollsionChecker {
     }
 }
 
-impl CollisionChecker for GeoCollsionChecker {
+impl CollisionChecker for GeoCollisionChecker {
 
     fn init(&self) -> bool {
         true
